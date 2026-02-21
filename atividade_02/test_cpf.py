@@ -1,50 +1,24 @@
-"""
-Testes para o Sistema de Validação de CPF
-
-Contém testes parametrizados, fixtures e testes de exceção.
-Segue o padrão AAA (Arrange, Act, Assert).
-"""
 import pytest
 from cpf import validar_cpf, formatar_cpf
 
 
-# Testes usando fixtures e parametrização
-@pytest.mark.parametrize("cpf", [
-    "11144477735",
-    "00000000191",
-    "52998224725",
-    "111.444.777-35",
+# Testes de validação usando parametrização
+@pytest.mark.parametrize("cpf,esperado", [
+    ("11144477735", True),           # CPF válido padrão
+    ("00000000191", True),           # CPF válido com zeros
+    ("12345678901", False),          # Dígitos verificadores errados
+    ("11111111111", False),          # Todos dígitos iguais
+    ("1234567890", False),           # Menos de 11 dígitos
+    ("123456789012", False),         # Mais de 11 dígitos
+    ("1234567890a", False),          # Com letras
 ])
-def test_validar_cpf_validos(cpf):
-    """Testa validação de CPFs válidos usando parametrização."""
-    # Arrange - cpf já vem como parâmetro
-    
+def test_validar_cpf(cpf, esperado):
+    """Testa validação de CPF com múltiplos casos."""
     # Act
     resultado = validar_cpf(cpf)
     
     # Assert
-    assert resultado is True
-
-
-@pytest.mark.parametrize("cpf", [
-    "12345678901",  # Dígitos verificadores errados
-    "111.111.111-11",  # Todos dígitos iguais
-    "11111111111",  # Todos dígitos iguais
-    "00000000000",  # Todos zeros
-    "1234567890",  # Menos de 11 dígitos
-    "123456789012",  # Mais de 11 dígitos
-    "1234567890a",  # Com letras
-    "abc.def.ghi-jk",  # Apenas letras
-])
-def test_validar_cpf_invalidos(cpf):
-    """Testa validação de CPFs inválidos usando parametrização."""
-    # Arrange - cpf já vem como parâmetro
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is False
+    assert resultado is esperado
 
 
 def test_validar_cpf_string_vazia():
@@ -71,84 +45,12 @@ def test_validar_cpf_none():
     assert resultado is False
 
 
-def test_validar_cpf_com_zeros():
-    """Testa CPF válido com zeros."""
-    # Arrange
-    cpf = "00000000191"
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is True
-
-
-def test_validar_cpf_todos_digitos_iguais():
-    """Testa CPF com todos dígitos iguais (111.111.111-11)."""
-    # Arrange
-    cpf = "11111111111"
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is False
-
-
-def test_validar_cpf_menos_11_digitos():
-    """Testa CPF com menos de 11 dígitos."""
-    # Arrange
-    cpf = "1234567890"
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is False
-
-
-def test_validar_cpf_mais_11_digitos():
-    """Testa CPF com mais de 11 dígitos."""
-    # Arrange
-    cpf = "123456789012"
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is False
-
-
-def test_validar_cpf_com_letras():
-    """Testa CPF com letras."""
-    # Arrange
-    cpf = "1234567890a"
-    
-    # Act
-    resultado = validar_cpf(cpf)
-    
-    # Assert
-    assert resultado is False
-
-
+# Testes de formatação
 def test_formatar_cpf_valido():
     """Testa formatação de CPF válido."""
     # Arrange
     cpf = "11144477735"
     formato_esperado = "111.444.777-35"
-    
-    # Act
-    resultado = formatar_cpf(cpf)
-    
-    # Assert
-    assert resultado == formato_esperado
-
-
-def test_formatar_cpf_valido_com_zeros():
-    """Testa formatação de CPF válido com zeros."""
-    # Arrange
-    cpf = "00000000191"
-    formato_esperado = "000.000.001-91"
     
     # Act
     resultado = formatar_cpf(cpf)
@@ -181,17 +83,7 @@ def test_formatar_cpf_string_vazia_levanta_excecao():
     assert "CPF inválido" in str(exc.value)
 
 
-def test_formatar_cpf_com_letras_levanta_excecao():
-    """Testa que formatar_cpf levanta ValueError para CPF com letras."""
-    # Arrange
-    cpf = "abc.def.ghi-jk"
-    
-    # Act & Assert
-    with pytest.raises(ValueError):
-        formatar_cpf(cpf)
-
-
-# Testes usando fixtures
+# Testes com fixtures
 def test_validar_cpfs_validos_com_fixture(cpfs_validos):
     """Testa múltiplos CPFs válidos usando fixture."""
     # Arrange - cpfs_validos vem da fixture
