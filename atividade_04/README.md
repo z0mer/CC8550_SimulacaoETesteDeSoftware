@@ -129,13 +129,6 @@ Conclusão:
 C0 = C1 = 3 testes
 ```
 
-## 2.6 Casos de Teste de Fronteira
-
-| CT  | x   | Retorno | Observação                              |
-|-----|-----|---------|-----------------------------------------|
-| CT4 | 100 | Medio   | Valor limite: x == 100 → não entra no primeiro if |
-| CT5 | 50  | Baixo   | Valor limite: x == 50 → não entra no segundo if   |
-
 ---
 
 # Exercício 3 — Cobertura de Condição
