@@ -41,7 +41,7 @@ V(G) = 10 − 8 + 2 = 4
 |---------|--------------------|---------------|---------|
 | C1      | N1→N2(F)→N6(F)→N8 | n == 0        | 0       |
 | C2      | N1→N2(F)→N6(V)→N7 | n < 0         | -1      |
-| C3      | N1→N2(V)→N3(V)→N4 | n > 0 e par   | 2       |
+| C3      | N1→N2(V)→N3(V)→N4 | n > 0 e par   | 4       |
 | C4      | N1→N2(V)→N3(F)→N5 | n > 0 e impar | 3       |
 
 ---
@@ -50,10 +50,10 @@ V(G) = 10 − 8 + 2 = 4
 
 | CT  | Entrada | Saída Esperada   | Caminho |
 |-----|---------|------------------|---------|
-| CT1 | n=0     | "Zero"           | C1      |
-| CT2 | n=-1    | "Negativo"       | C2      |
-| CT3 | n=2     | "Par positivo"   | C3      |
-| CT4 | n=3     | "Impar positivo" | C4      |
+| CT1 | n=4     | "Par positivo"   | C3      |
+| CT2 | n=3     | "Impar positivo" | C4      |
+| CT3 | n=-1    | "Negativo"       | C2      |
+| CT4 | n=0     | "Zero"           | C1      |
 
 ---
 
@@ -129,6 +129,13 @@ Conclusão:
 C0 = C1 = 3 testes
 ```
 
+## 2.6 Casos de Teste de Fronteira
+
+| CT  | x   | Retorno | Observação                              |
+|-----|-----|---------|-----------------------------------------|
+| CT4 | 100 | Medio   | Valor limite: x == 100 → não entra no primeiro if |
+| CT5 | 50  | Baixo   | Valor limite: x == 50 → não entra no segundo if   |
+
 ---
 
 # Exercício 3 — Cobertura de Condição
@@ -181,12 +188,19 @@ V(G) = n de predicados + 1 = 1 + 1 = 2
 |-----|-------|--------|-------------|---------------|-----------|----|----|
 | CT1 | 20    | True   | True        | True          | Permitido | ✓  | ✓  |
 | CT2 | 20    | False  | True        | False         | Negado    |    | ✓  |
-| CT3 | 15    | True   | False       | True          | Negado    |    | ✓  |
-| CT4 | 15    | False  | False       | False         | Negado    | ✓  | ✓  |
+| CT3 | 16    | True   | False       | True          | Negado    |    | ✓  |
+| CT4 | 16    | False  | False       | False         | Negado    | ✓  | ✓  |
 
 - **C1 (Ramos):** 2 CTs necessários — cobre apenas Sim/Não do `if` composto.
 - **CC (Condição):** 4 CTs necessários — cobre todas as combinações de cada subcondição individualmente.
 - **Diferença:** CC é mais rigorosa. Com apenas C1, o comportamento individual de `idade >= 18` e `membro` pode não ser totalmente exercitado.
+
+## 3.5 Casos de Teste de Ramos (C1)
+
+| CT  | idade | membro | Resultado | Ramo         |
+|-----|-------|--------|-----------|--------------|
+| CT5 | 18    | True   | Permitido | ramo Sim     |
+| CT6 | 17    | True   | Negado    | ramo Não     |
 
 ---
 
@@ -221,12 +235,12 @@ V(G) = n de predicados + 1 = 1 + 1 = 2
 
 ## 4.3 Casos de Teste
 
-| CT  | n  | Iterações | Resultado | Cenário                       |
-|-----|----|-----------|-----------|-------------------------------|
-| CT1 | 0  | 0         | 0         | Laço ignorado (0 iterações)   |
-| CT2 | 1  | 1         | 0         | Laço executado 1 vez          |
-| CT3 | 5  | 5         | 10        | Laço várias vezes (0+1+2+3+4) |
-| CT4 | 10 | 10        | 45        | Laço muitas vezes             |
+| CT  | n | Iterações | Resultado | Cenário                       |
+|-----|---|-----------|-----------|-------------------------------|
+| CT1 | 0 | 0         | 0         | Laço ignorado (0 iterações)   |
+| CT2 | 1 | 1         | 0         | Laço executado 1 vez          |
+| CT3 | 5 | 5         | 10        | Laço várias vezes (0+1+2+3+4) |
+| CT4 | 2 | 2         | 1         | Laço duas vezes (0+1=1)       |
 
 ---
 
@@ -325,15 +339,13 @@ V(G) = 5
 
 ## 6.3 Casos de Teste
 
-| CT  | numeros      | total | Retorno | Critério                     |
-|-----|--------------|-------|---------|------------------------------|
-| CT1 | []           | 0     | Abaixo  | Laço 0 iterações             |
-| CT2 | [2]          | 2     | Abaixo  | 1 iteração, n par positivo   |
-| CT3 | [2, 4, 6]    | 12    | Acima   | Várias iterações, total > 10 |
-| CT4 | [-1, -1, -1] | -3    | Abaixo  | n negativo, total -= 1       |
-| CT5 | [1, 3, 5]    | 0     | Abaixo  | n ímpar positivo → continue  |
-| CT6 | [12]         | 12    | Acima   | 1 iteração, total > 10       |
-| CT7 | [4, -1, 3]   | 3     | Abaixo  | Valores mistos               |
+| CT  | numeros   | total | Retorno | Critério                     |
+|-----|-----------|-------|---------|------------------------------|
+| CT1 | []        | 0     | Abaixo  | Laço 0 iterações             |
+| CT2 | [2]       | 2     | Abaixo  | 1 iteração, n par positivo   |
+| CT3 | [2, 4, 6] | 12    | Acima   | Várias iterações, total > 10 |
+| CT4 | [-1]      | -1    | Abaixo  | n negativo, total -= 1       |
+| CT5 | [1]       | 0     | Abaixo  | n ímpar positivo → continue  |
 
 ---
 
@@ -410,13 +422,13 @@ flowchart LR
 
 ## 7.4 Pares Def-Uso de `total`
 
-| Par      | Definição            | Uso             | Condição                       |
-|----------|----------------------|-----------------|--------------------------------|
-| (L2, L6) | `total = preco`      | `if total < 50` | sempre                         |
+| Par      | Definição            | Uso             | Condição                        |
+|----------|----------------------|-----------------|---------------------------------|
+| (L2, L6) | `total = preco`      | `if total < 50` | sempre                          |
 | (L2, L8) | `total = preco`      | `return total`  | cliente_vip=False e total >= 50 |
-| (L5, L6) | `total = preco-desc` | `if total < 50` | cliente_vip=True               |
-| (L5, L8) | `total = preco-desc` | `return total`  | cliente_vip=True e total >= 50 |
-| (L7, L8) | `total = 50`         | `return total`  | total original < 50            |
+| (L5, L6) | `total = preco-desc` | `if total < 50` | cliente_vip=True                |
+| (L5, L8) | `total = preco-desc` | `return total`  | cliente_vip=True e total >= 50  |
+| (L7, L8) | `total = 50`         | `return total`  | total original < 50             |
 
 ---
 
