@@ -1,6 +1,3 @@
-# mutantes.py
-# Análise MANUAL de teste de mutação por substituição de operadores
-
 # MUTANTE 1 – subtrair: substituir - por +
 def subtrair_m1(a, b):
     return a + b  # - → +

@@ -1,4 +1,3 @@
-# test_mutantes.py
 import pytest
 import sys
 sys.path.insert(0, './src')
@@ -38,16 +37,3 @@ def test_classificar_temperatura_mutantes():
     
     # M10 sobrevive porque nenhum teste original testa exatamente o limite de 15 graus
     assert classificar_temperatura_10(10) == "Frio"
-
-# ============================================================
-# Resultado manual para o relatório:
-# ============================================================
-# Mutantes totais: 10
-# Mutantes mortos: 8
-# Mutantes sobreviventes: 2 (M5 e M10)
-#
-# Cálculo:
-# Mutation Score = (8 / 10) * 100
-#
-# Resultado final:
-# Mutation Score = 80%
