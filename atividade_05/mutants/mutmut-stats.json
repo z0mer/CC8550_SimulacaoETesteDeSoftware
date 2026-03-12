@@ -1,0 +1,37 @@
+{
+    "tests_by_mangled_function_name": {
+        "atv05.x_subtrair": [
+            "test/test_atv05.py::test_subtrair_negativos",
+            "test/test_atv05.py::test_subtrair_positivos"
+        ],
+        "atv05.x_eh_multiplo_de_tres": [
+            "test/test_atv05.py::test_eh_multiplo_de_tres_falso",
+            "test/test_atv05.py::test_eh_multiplo_de_tres_verdadeiro"
+        ],
+        "atv05.x_menor_numero": [
+            "test/test_atv05.py::test_menor_numero_primeiro_menor",
+            "test/test_atv05.py::test_menor_numero_segundo_menor"
+        ],
+        "atv05.x_calcular_dobro_se_par": [
+            "test/test_atv05.py::test_calcular_dobro_se_par_com_impar",
+            "test/test_atv05.py::test_calcular_dobro_se_par_com_par"
+        ],
+        "atv05.x_classificar_temperatura": [
+            "test/test_atv05.py::test_classificar_temperatura_quente",
+            "test/test_atv05.py::test_classificar_temperatura_frio"
+        ]
+    },
+    "duration_by_test": {
+        "test/test_atv05.py::test_subtrair_positivos": 0.00046978699998589946,
+        "test/test_atv05.py::test_subtrair_negativos": 0.00040303300005462006,
+        "test/test_atv05.py::test_eh_multiplo_de_tres_verdadeiro": 0.0003782359999036089,
+        "test/test_atv05.py::test_eh_multiplo_de_tres_falso": 0.0003280119999544695,
+        "test/test_atv05.py::test_menor_numero_primeiro_menor": 0.0003515970000194102,
+        "test/test_atv05.py::test_menor_numero_segundo_menor": 0.0009193160000222633,
+        "test/test_atv05.py::test_calcular_dobro_se_par_com_par": 0.00037770600005160304,
+        "test/test_atv05.py::test_calcular_dobro_se_par_com_impar": 0.0004184919999943304,
+        "test/test_atv05.py::test_classificar_temperatura_quente": 0.0003547310000158177,
+        "test/test_atv05.py::test_classificar_temperatura_frio": 0.0004185719999441062
+    },
+    "stats_time": 0.3402068170000001
+}
