@@ -1,43 +1,39 @@
+from collections import defaultdict
+
 class Estoque:
     def __init__(self):
-        self._itens = {}
+        # Refactor: Uso de defaultdict para evitar erros de chave inexistente
+        self._itens = defaultdict(int)
 
-    def _validar_quantidade_positiva(self, quantidade: int, operacao: str):
-        # Refatoração criada para aplicar o princípio DRY (Don't Repeat Yourself) 
-        # nas validações de adição e remoção.
-        if quantidade <= 0:
-            raise ValueError(f"Não é permitido {operacao} quantidade menor ou igual a zero.")
+    def _validar_quantidade(self, valor: int, operacao: str):
+        # Refactor: Método privado para aplicar DRY (Don't Repeat Yourself) nas validações
+        if valor <= 0:
+            raise ValueError(f"Quantidade para {operacao} deve ser maior que zero.")
 
     def consultar_quantidade(self, nome: str) -> int:
-        # Retorna 0 para produto inexistente conforme a regra de negócio.
+        # Green: Retorna 0 para itens não cadastrados automaticamente
         return self._itens.get(nome, 0)
 
     def adicionar_produto(self, nome: str, quantidade: int):
-        self._validar_quantidade_positiva(quantidade, "adicionar")
-        if nome in self._itens:
-            self._itens[nome] += quantidade
-        else:
-            self._itens[nome] = quantidade
+        self._validar_quantidade(quantidade, "adicionar")
+        # Green: Incrementa o valor. Graças ao defaultdict, não precisa de 'if nome in self._itens'
+        self._itens[nome] += quantidade
 
     def remover_produto(self, nome: str, quantidade: int):
-        self._validar_quantidade_positiva(quantidade, "remover")
+        self._validar_quantidade(quantidade, "remover")
         
-        qtd_atual = self.consultar_quantidade(nome)
-        if quantidade > qtd_atual:
-            raise ValueError("Não é possível remover mais unidades do que o disponível.")
+        if quantidade > self.consultar_quantidade(nome):
+            raise ValueError("Saldo insuficiente no estoque.")
             
         self._itens[nome] -= quantidade
-        
-        # Refatoração para manter o dicionário limpo e ajudar no listar_produtos()
-        if self._itens[nome] == 0:
-            del self._itens[nome]
 
     def listar_produtos(self) -> list:
-        # Lista produtos com quantidade > 0 (considerando que itens zerados foram deletados)
-        return list(self._itens.keys())
+        # Refactor: Filtra em tempo real apenas produtos com saldo positivo
+        return [item for item, qtd in self._itens.items() if qtd > 0]
 
     def produto_mais_estocado(self):
-        # Retorna None se o estoque estiver vazio conforme regra de negócio.
-        if not self._itens:
+        # Green: Verifica se há itens antes de usar a função max()
+        produtos_validos = self.listar_produtos()
+        if not produtos_validos:
             return None
         return max(self._itens, key=self._itens.get)
