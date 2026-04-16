@@ -22,6 +22,11 @@ SCHEMA_USUARIO = {
 
 
 def _fazer_login():
+    """
+    Função auxiliar que realiza o login com credenciais de teste.
+    Envia requisição POST para o endpoint de autenticação com usuário e senha padrão.
+    Retorna a resposta da requisição contendo o token de autenticação.
+    """
     payload = {
         "username": "emilys",
         "password": "emilyspass",
@@ -32,7 +37,12 @@ def _fazer_login():
 
 @pytest.fixture
 def recurso_criado():
-    """Cria um usuario temporario antes do teste e remove ao final."""
+    """
+    Fixture que implementa o padrão setup-teardown.
+    Cria um usuário de teste antes da execução do teste (setup)
+    e remove esse usuário após a conclusão (teardown),
+    garantindo que o banco de dados fica limpo após cada teste.
+    """
     payload = {
         "firstName": "Teste",
         "lastName": "Automatizado",
@@ -50,7 +60,11 @@ def recurso_criado():
 
 
 def test_listar_recursos():
-    """Valida GET na colecao retornando status 200 e lista de usuarios nao vazia."""
+    """
+    Testa a listagem de todos os usuários (GET na coleção).
+    Valida que o endpoint retorna status HTTP 200 (sucesso)
+    e que a resposta contém uma lista não vazia de usuários.
+    """
     response = requests.get(USERS_URL, timeout=10)
 
     assert response.status_code == 200
@@ -60,7 +74,11 @@ def test_listar_recursos():
 
 
 def test_schema_recurso():
-    """Valida que GET em recurso existente retorna schema compativel com jsonschema."""
+    """
+    Testa a validação do schema de resposta da API.
+    Recupera um usuário específico (GET) e valida que a estrutura
+    da resposta está em conformidade com o schema JSON definido (SCHEMA_USUARIO).
+    """
     response = requests.get(f"{USERS_URL}/1", timeout=10)
 
     assert response.status_code == 200
@@ -68,14 +86,22 @@ def test_schema_recurso():
 
 
 def test_recurso_inexistente():
-    """Valida que GET em recurso inexistente retorna status 404."""
+    """
+    Testa a resposta da API ao acessar um recurso que não existe.
+    Valida que o endpoint retorna status HTTP 404 (Not Found)
+    quando tenta acessar um usuário com ID inexistente.
+    """
     response = requests.get(f"{USERS_URL}/999999", timeout=10)
 
     assert response.status_code == 404
 
 
 def test_criar_recurso():
-    """Valida que POST criando usuario retorna status 201 e inclui id na resposta."""
+    """
+    Testa a criação de um novo usuário (POST).
+    Valida que o endpoint retorna status HTTP 201 (Created)
+    e que a resposta contém um ID gerado para o novo usuário.
+    """
     payload = {
         "firstName": "Maria",
         "lastName": "Oliveira",
@@ -92,7 +118,11 @@ def test_criar_recurso():
 
 
 def test_atualizar_recurso():
-    """Valida que PUT atualiza um campo do recurso e retorna sucesso."""
+    """
+    Testa a atualização de um usuário existente (PUT).
+    Envia uma requisição de atualização parcial de um campo
+    e valida que o servidor retorna status 200 com o valor atualizado.
+    """
     payload = {"lastName": "Atualizado"}
     response = requests.put(f"{USERS_URL}/1", json=payload, timeout=10)
 
@@ -102,14 +132,22 @@ def test_atualizar_recurso():
 
 
 def test_deletar_recurso():
-    """Valida que DELETE retorna status 200 ou 204 para a remocao simulada."""
+    """
+    Testa a exclusão de um usuário (DELETE).
+    Valida que o endpoint retorna status HTTP 200 ou 204,
+    indicando sucesso na operação de remoção.
+    """
     response = requests.delete(f"{USERS_URL}/1", timeout=10)
 
     assert response.status_code in (200, 204)
 
 
 def test_dados_invalidos():
-    """Valida que envio de credenciais invalidas gera resposta 4xx."""
+    """
+    Testa o comportamento da API com credenciais inválidas.
+    Valida que o endpoint de autenticação rejeita credenciais incorretas
+    retornando um código de erro 4xx (erro do cliente).
+    """
     payload = {
         "username": "usuario-invalido",
         "password": "senha-invalida",
@@ -120,14 +158,22 @@ def test_dados_invalidos():
 
 
 def test_endpoint_autenticado_sem_credencial():
-    """Valida que endpoint protegido sem token retorna erro de autenticacao."""
+    """
+    Testa a segurança do endpoint autenticado.
+    Valida que ao tentar acessar um endpoint protegido sem fornecer um token,
+    a API retorna status HTTP 401 (Unauthorized).
+    """
     response = requests.get(AUTH_ME_URL, timeout=10)
 
     assert response.status_code == 401
 
 
 def test_endpoint_autenticado_com_credencial():
-    """Valida que endpoint protegido com token retorna status 200."""
+    """
+    Testa o acesso a endpoint protegido com token de autenticação.
+    Realiza login para obter um token válido, depois usa esse token
+    para acessar um endpoint protegido e valida que retorna status 200.
+    """
     login_response = _fazer_login()
     assert login_response.status_code == 200
 
@@ -143,13 +189,21 @@ def test_endpoint_autenticado_com_credencial():
 
 
 def test_usar_fixture(recurso_criado):
-    """Usa fixture para validar o recurso criado durante o setup do teste."""
+    """
+    Testa o funcionamento da fixture recurso_criado.
+    Valida que a fixture criou corretamente um usuário com os dados esperados,
+    verificando a presença do ID e do nome esperado na resposta.
+    """
     assert "id" in recurso_criado
     assert recurso_criado["firstName"] == "Teste"
 
 
 def test_tempo_resposta():
-    """Valida que o tempo de resposta do GET fica abaixo de 2 segundos."""
+    """
+    Testa o desempenho da API medindo o tempo de resposta.
+    Valida que uma requisição GET retorna sucesso (status 200)
+    e que o tempo total de resposta fica abaixo do limite de 2 segundos.
+    """
     response = requests.get(f"{USERS_URL}/1", timeout=10)
 
     assert response.status_code == 200
