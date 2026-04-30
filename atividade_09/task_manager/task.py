@@ -33,12 +33,14 @@ class Task:
     status: Status = field(default=Status.PENDENTE)
 
     def validar(self):
+        """Valida regras basicas antes de salvar a tarefa."""
         if len(self.titulo) < 3:
             raise ValueError("Título deve ter pelo menos 3 caracteres.")
         if self.prazo < datetime.now():
             raise ValueError("O prazo não pode estar no passado.")
 
     def atualizar_status(self, novo_status: Status):
+        """Move a tarefa apenas para um status permitido."""
         if novo_status not in _TRANSICOES_VALIDAS[self.status]:
             raise ValueError(
                 f"Transição inválida de {self.status.value} para {novo_status.value}."
