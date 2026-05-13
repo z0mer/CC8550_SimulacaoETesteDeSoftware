@@ -16,7 +16,12 @@ limiter = Limiter(
     get_remote_address,
     app=app,
     default_limits=["100 per minute"],
+    # memory:// mantém o estado de rate limiting no processo, sem depender de Redis.
+    # Funciona corretamente no test client do Flask, onde todas as chamadas
+    # compartilham o mesmo processo e são vistas como o mesmo IP.
     storage_uri="memory://",
+    # headers_enabled expõe Retry-After e X-RateLimit-* nas respostas 429,
+    # exigido pelos testes de segurança para validar o comportamento do cliente.
     headers_enabled=True,
 )
 
@@ -41,6 +46,8 @@ _seed_produtos()
 
 
 @app.route("/saude")
+# Sem @limiter.limit: health checks de balanceadores de carga precisam
+# sempre responder, mesmo quando o servidor está sob carga máxima.
 def saude():
     return jsonify({"status": "ok"})
 
@@ -105,4 +112,7 @@ def criar_pedido():
 
 
 if __name__ == "__main__":
+    # threaded=True habilita uma thread por requisição no servidor de desenvolvimento,
+    # necessário para que os testes de carga com múltiplos usuários simultâneos
+    # não fiquem bloqueados aguardando a resposta anterior.
     app.run(host="0.0.0.0", port=5000, threaded=True)

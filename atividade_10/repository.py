@@ -9,6 +9,8 @@ class ProdutoRepository:
         self._next_id = 1
 
     def save(self, produto: Produto) -> Produto:
+        # Funciona tanto como insert (id None) quanto como update (id existente),
+        # simplificando o contrato da camada de serviço.
         if produto.id is None:
             produto.id = self._next_id
             self._next_id += 1

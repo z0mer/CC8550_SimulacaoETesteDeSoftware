@@ -27,6 +27,8 @@ class TestRateLimitingProdutos:
     def test_rate_limit_retorna_429_apos_100_requisicoes(self, flask_client):
         """Após 100 requisições no mesmo minuto, a 101ª deve retornar 429."""
         codigos = []
+        # 105 requisições (não 101): margem de 5 para absorver eventuais variações
+        # no contador interno do Flask-Limiter em modo de teste.
         for _ in range(105):
             resp = flask_client.get("/produtos")
             codigos.append(resp.status_code)
@@ -45,6 +47,8 @@ class TestRateLimitingProdutos:
                 break
 
         assert ultima_resposta_429 is not None, "Nenhuma resposta 429 recebida"
+        # Headers HTTP são case-insensitive; normalizar para lower evita falso negativo
+        # caso o Flask-Limiter mude a capitalização em versões futuras.
         headers = {k.lower() for k in ultima_resposta_429.headers.keys()}
         assert "retry-after" in headers or "x-ratelimit-reset" in headers, (
             f"Headers de rate limit ausentes. Headers recebidos: {list(ultima_resposta_429.headers.keys())}"

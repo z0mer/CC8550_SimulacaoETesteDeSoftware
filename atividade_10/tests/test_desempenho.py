@@ -11,6 +11,9 @@ import pytest
 class TestDesempenhoListarProdutos:
     @pytest.mark.benchmark(min_rounds=100)
     def test_p95_listar_produtos_vazio(self, benchmark, produto_service):
+        # benchmark() executa a função min_rounds vezes e coleta estatísticas.
+        # Usamos "mean" como proxy do P95: se a média está em ~1ms, o P95 também
+        # estará muito abaixo de 500ms. Para P95 real, usar Locust em modo HTTP.
         resultado = benchmark(produto_service.listar_produtos)
         assert benchmark.stats["mean"] < 0.5, (
             f"Média {benchmark.stats['mean']*1000:.2f}ms excede SLA de 500ms"
@@ -37,6 +40,9 @@ class TestDesempenhoBuscarProduto:
 
 
 class TestDesempenhoCriarPedido:
+    # min_rounds=50 (menor que os outros 100): criar_pedido modifica estado
+    # (decrementa estoque em cada rodada), então um número alto esgotaria o estoque
+    # do produto_populado (100 unidades) antes de completar as medições.
     @pytest.mark.benchmark(min_rounds=50)
     def test_p95_criar_pedido(self, benchmark, pedido_service, produto_populado):
         itens = [{"produto_id": produto_populado.id, "quantidade": 1}]

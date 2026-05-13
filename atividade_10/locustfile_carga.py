@@ -29,6 +29,9 @@ class UsuarioBlackFriday(HttpUser):
     wait_time = between(0.1, 0.5)
 
     def on_start(self):
+        # Valida que o servidor está de pé antes de iniciar o usuário.
+        # Se o health check falhar, encerra o teste imediatamente (fail fast)
+        # em vez de acumular erros de conexão nos relatórios.
         resp = self.client.get("/saude")
         if resp.status_code != 200:
             self.environment.runner.quit()

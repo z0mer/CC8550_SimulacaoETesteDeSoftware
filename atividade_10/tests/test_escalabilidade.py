@@ -20,6 +20,8 @@ def _medir_throughput(service, n_workers: int) -> float:
             executor.submit(service.listar_produtos)
             for _ in range(N_REQUESTS)
         ]
+        # wait() aguarda todas as futures sem coletar resultados —
+        # o retorno de listar_produtos não importa aqui, apenas o tempo total.
         concurrent.futures.wait(futures)
     duracao = time.perf_counter() - inicio
     return N_REQUESTS / duracao
@@ -33,6 +35,8 @@ class TestEscalabilidade:
         throughput_1 = _medir_throughput(produto_service, n_workers=1)
         throughput_4 = _medir_throughput(produto_service, n_workers=4)
 
+        # Fórmula de eficiência horizontal: quanto do ganho ideal foi alcançado.
+        # Ideal = throughput_1 * 4; real = throughput_4. Ratio dividido por 4 normaliza para [0,1].
         eficiencia = (throughput_4 / throughput_1) / 4.0
         assert eficiencia >= 0.80, (
             f"Eficiência com 4 workers: {eficiencia:.1%} — abaixo da meta de 80%\n"

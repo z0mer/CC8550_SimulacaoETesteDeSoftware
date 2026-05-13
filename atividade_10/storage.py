@@ -5,6 +5,8 @@ from typing import Any, Dict, Optional
 class InMemoryStorage:
     def __init__(self):
         self._data: Dict[int, Any] = {}
+        # Lock garante atomicidade em cenários com múltiplas threads simultâneas,
+        # como nos testes de escalabilidade com ThreadPoolExecutor.
         self._lock = threading.Lock()
 
     def add(self, id: int, item: Any) -> None:
@@ -17,6 +19,8 @@ class InMemoryStorage:
 
     def get_all(self) -> list:
         with self._lock:
+            # Cópia defensiva: evita que o chamador itere sobre o dict
+            # enquanto outra thread o modifica fora do lock.
             return list(self._data.values())
 
     def delete(self, id: int) -> bool:

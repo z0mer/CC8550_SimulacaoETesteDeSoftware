@@ -39,7 +39,9 @@ class UsuarioEstresse(HttpUser):
             name="GET /produtos",
         ) as resp:
             if resp.status_code == 429:
-                resp.success()  # rate limiting é comportamento esperado, não falha
+                # Locust contabilizaria 429 como falha por padrão; override para success
+                # porque rate limiting é proteção intencional do servidor, não um erro.
+                resp.success()
             elif resp.status_code >= 500:
                 resp.failure(f"Erro de servidor: {resp.status_code}")
 
@@ -72,6 +74,7 @@ class UsuarioEstresse(HttpUser):
 @events.test_stop.add_listener
 def on_test_stop(environment, **kwargs):
     stats = environment.stats.total
+    # getattr com fallback: runner pode ser None se o teste for interrompido abruptamente.
     n_usuarios = getattr(environment.runner, "user_count", "?")
     taxa_erro = stats.fail_ratio * 100
     rps = stats.current_rps

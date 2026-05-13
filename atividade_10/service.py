@@ -14,6 +14,9 @@ class ProdutoService:
         return self.repository.save(produto)
 
     def listar_produtos(self) -> list:
+        # sleep libera o GIL durante a espera, permitindo que outras threads
+        # executem em paralelo — essencial para o ganho de throughput nos testes
+        # de escalabilidade com ThreadPoolExecutor.
         time.sleep(0.001)  # simula latência de I/O de banco de dados
         return self.repository.find_all()
 
@@ -69,5 +72,6 @@ class PedidoService:
             itens_pedido.append(item_carrinho)
             total += produto.preco * quantidade
 
+        # round(total, 2) corrige acúmulo de erro de ponto flutuante em somas de preços.
         pedido = Pedido(itens=itens_pedido, total=round(total, 2))
         return self.pedido_repo.save(pedido)

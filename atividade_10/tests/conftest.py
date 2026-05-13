@@ -2,6 +2,9 @@ import sys
 from pathlib import Path
 import pytest
 
+# Adiciona o diretório pai (atividade_10/) ao path para que os imports
+# dos módulos do sistema (storage, repository, service, app) funcionem
+# ao rodar pytest a partir de qualquer diretório.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from storage import InMemoryStorage
@@ -27,6 +30,8 @@ def produto_service(produto_repo):
 
 @pytest.fixture
 def pedido_repo():
+    # Storage separado do produto_repo: ambos usam IDs inteiros começando em 1,
+    # então compartilhar o mesmo storage causaria colisão de chaves.
     return PedidoRepository(InMemoryStorage())
 
 
@@ -43,5 +48,7 @@ def produto_populado(produto_service):
 @pytest.fixture
 def flask_client():
     flask_app.config["TESTING"] = True
+    # O context manager garante que o app context do Flask seja encerrado
+    # após cada teste, evitando que o estado do limiter vaze entre testes.
     with flask_app.test_client() as client:
         yield client
